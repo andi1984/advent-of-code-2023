@@ -41,7 +41,9 @@ func main() {
 				check = Lib.CharIsSymbol(wholeMapping[x-1][y-1])
 			}
 
-			check = Lib.CharIsSymbol(wholeMapping[x-1][y])
+			if !check {
+				check = Lib.CharIsSymbol(wholeMapping[x-1][y])
+			}
 
 			if !check && y < (len(wholeMapping[0])-1) {
 				check = Lib.CharIsSymbol(wholeMapping[x-1][y+1])
@@ -62,7 +64,9 @@ func main() {
 				check = Lib.CharIsSymbol(wholeMapping[x+1][y-1])
 			}
 
-			check = Lib.CharIsSymbol(wholeMapping[x+1][y])
+			if !check {
+				check = Lib.CharIsSymbol(wholeMapping[x+1][y])
+			}
 
 			if !check && y < (len(wholeMapping[0])-1) {
 				check = Lib.CharIsSymbol(wholeMapping[x+1][y+1])
@@ -77,7 +81,14 @@ func main() {
 		input := wholeMapping[x]
 
 		// find the index of the dot before the number
-		start := strings.LastIndexFunc(input[:y], isRuneNotADigit)
+		startIndex := strings.LastIndexFunc(input[:y], isRuneNotADigit)
+		var start int
+		if startIndex == -1 {
+			start = -1
+		} else {
+			start = startIndex - 1
+		}
+
 		// find the index of the dot after the number
 		endIndex := strings.IndexFunc(input[y:], isRuneNotADigit)
 		var end int
@@ -89,6 +100,7 @@ func main() {
 
 		// get the substring that contains the number
 		numStr := input[start+1 : end]
+		// fmt.Println(x, y, numStr)
 
 		filteredString := Lib.Filter(numStr, unicode.IsDigit)
 		// convert the substring to an integer
@@ -112,10 +124,11 @@ func main() {
 				// fmt.Println(y, allDigitIndices[x][i-1])
 				if y == allDigitIndices[x][i-1]+1 {
 					// we skip
-					break
+					continue
 				}
 			}
 
+			// fmt.Println(x, y)
 			lastOneIsAdjacent = hasAdjacent(x, y)
 
 			// Check if for a digit group there is a special char adjacent
@@ -123,7 +136,7 @@ func main() {
 				//Get the full number at x,y
 				// If yes, add it to the sum
 				num := getNumber(x, y)
-				fmt.Println(num)
+				// fmt.Println(num)
 				sum = sum + num
 			}
 		}
